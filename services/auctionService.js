@@ -1,36 +1,57 @@
 const auctionService = () => {
-    const getAllAuctions = (cb, errorCb) => {
-        // Your implementation goes here
-    };
+  const auctionDb = require("../data/db").Auction;
+  const auctionBidDb = require("../data/db").AuctionBid;
 
-    const getAuctionById = (id, cb, errorCb) => {
-        // Your implementation goes here
-    };
+  const getAllAuctions = (cb, errorCb) => {
+    auctionDb.find({}, (err, auctions) => {
+      if (err) {
+        throw new Error(err);
+      } else {
+        cb(auctions);
+      }
+    });
+  };
 
-    const getAuctionWinner = (auctionId, cb, errorCb) => {
-        // Your implementation goes here
-    };
+  const getAuctionById = (id, cb, errorCb) => {
+    auctionDb.find(id, (err, auction) => {
+      if (err) {
+        throw new Error(err);
+      } else {
+        cb(auction);
+      }
+    });
+  };
 
-	const createAuction = (auction, cb, errorCb) => {
-        // Your implementation goes here
-    };
+  const getAuctionWinner = (auctionId, cb, errorCb) => {
+    //TODO: get auction winner from db
+  };
 
-	const getAuctionBidsWithinAuction = (auctionId, cb, errorCb) => {
-        // Your implementation goes here
-    };
+  const createAuction = (auction, cb, errorCb) => {
+    auctionDb.create(auction, (err, result) => {
+      if (err) {
+        errorCb(err);
+      } else {
+        cb(result);
+      }
+    });
+  };
 
-	const placeNewBid = (auctionId, customerId, price, cb, errorCb) => {
-		// Your implementation goes here
-	}
+  const getAuctionBidsWithinAuction = (auctionId, cb, errorCb) => {
+    //TODO: get bids within auction by id
+  };
 
-    return {
-        getAllAuctions,
-        getAuctionById,
-        getAuctionWinner,
-		createAuction,
-		getAuctionBidsWithinAuction,
-		placeNewBid
-    };
+  const placeNewBid = (auctionId, customerId, price, cb, errorCb) => {
+    //TODO: post new bid in auction with auctionid, customerid and price
+  };
+
+  return {
+    getAllAuctions,
+    getAuctionById,
+    getAuctionWinner,
+    createAuction,
+    getAuctionBidsWithinAuction,
+    placeNewBid
+  };
 };
 
 module.exports = auctionService();
