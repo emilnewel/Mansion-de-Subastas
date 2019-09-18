@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const customerService = require("../services/customerService");
+const auctionService = require("../services/customerService");
 
 router.get("/", (req, res) => {
   customerService.getAllCustomers(customers => {
@@ -15,6 +16,19 @@ router.get("/:customerId", (req, res) => {
     customerId,
     customer => {
       return res.status(200).json(customer);
+    },
+    err => {
+      return res.status(404).json(err);
+    }
+  );
+});
+
+router.get("/:customerId/auction-bids", (req, res) => {
+  const customerId = req.params.customerId;
+  auctionService.getCustomerAuctionBids(
+    customerId,
+    bids => {
+      return res.status(200).json(bids);
     },
     err => {
       return res.status(404).json(err);
