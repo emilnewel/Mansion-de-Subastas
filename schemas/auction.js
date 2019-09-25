@@ -12,11 +12,11 @@ const AuctionSchema = Schema({
   endDate: {
     type: Date,
     required: true
+  },
+  //TODO: NEEDS VALIDATION - Real customerID
+  //Needs to be changed to Schema.Types.ObjectId
+  auctionWinner: {
+      type: String
   }
-  //TODO: VALIDATE OBJECT ID
-  // auctionWinner: {
-  //     type: Schema.Types.ObjectId,
-  //     validate:
-  // }
 });
 module.exports = new Schema(AuctionSchema);

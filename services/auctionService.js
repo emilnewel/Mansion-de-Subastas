@@ -1,6 +1,7 @@
 const auctionService = () => {
   const auctionDb = require("../data/db").Auction;
   const auctionBidDb = require("../data/db").AuctionBid;
+  const customerDb = require("../data/db").Customer;
 
   const getAllAuctions = (cb, errorCb) => {
     auctionDb.find({}, (err, auctions) => {
@@ -13,9 +14,9 @@ const auctionService = () => {
   };
 
   const getAuctionById = (id, cb, errorCb) => {
-    auctionDb.find(id, (err, auction) => {
+    auctionDb.findById(id, (err, auction) => {
       if (err) {
-        throw new Error(err);
+        errorCb(err);
       } else {
         cb(auction);
       }
@@ -23,7 +24,21 @@ const auctionService = () => {
   };
 
   const getAuctionWinner = (auctionId, cb, errorCb) => {
-    //TODO: get auction winner from db
+    let winnerId;
+    auctionDb.findById(auctionId, "auctionWinner", (err, winner) => {
+      if (err) {
+        errorCb(err);
+      } else {
+        winnerId = winner.auctionWinner;
+        customerDb.findById(winnerId, (err, winner) => {
+          if (err) {
+            errorCb(err);
+          } else {
+            cb(winner);
+          }
+        });
+      }
+    });
   };
 
   const createAuction = (auction, cb, errorCb) => {
@@ -37,11 +52,26 @@ const auctionService = () => {
   };
 
   const getAuctionBidsWithinAuction = (auctionId, cb, errorCb) => {
-    //TODO: get bids within auction by id
+    auctionBidDb.find({ auctionId: auctionId }, (err, bids) => {
+      if (err) {
+        errorCb(err);
+      } else {
+        cb(bids);
+      }
+    });
   };
 
   const placeNewBid = (auctionId, customerId, price, cb, errorCb) => {
-    //TODO: post new bid in auction with auctionid, customerid and price
+    auctionBidDb.create(
+      { auctionId: auctionId, customerId: customerId, price: price },
+      (err, result) => {
+        if (err) {
+          errorCb(err);
+        } else {
+          cb(result);
+        }
+      }
+    );
   };
 
   return {

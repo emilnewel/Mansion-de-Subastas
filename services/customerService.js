@@ -1,5 +1,6 @@
 const customerService = () => {
   const customerDb = require("../data/db").Customer;
+  const auctionBidDb = require("../data/db").AuctionBid;
 
   const getAllCustomers = (cb, errorCb) => {
     customerDb.find({}, (err, customers) => {
@@ -21,7 +22,13 @@ const customerService = () => {
   };
 
   const getCustomerAuctionBids = (customerId, cb, errorCb) => {
-    //TODO: Your implementation goes here
+    auctionBidDb.findById({customerId: customerId}, (err, bids) => {
+      if (err) {
+        errorCb(err);
+      } else {
+        cb(bids);
+      }
+    });
   };
 
   const createCustomer = (customer, cb, errorCb) => {
