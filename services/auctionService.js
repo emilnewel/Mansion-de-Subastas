@@ -24,21 +24,31 @@ const auctionService = () => {
   };
 
   const getAuctionWinner = (auctionId, cb, errorCb) => {
-    let winnerId;
-    auctionDb.findById(auctionId, "auctionWinner", (err, winner) => {
-      if (err) {
-        errorCb(err);
+    auctionDb.findById(auctionId, (err, auction) => {
+      if(err) {
+        errorCb("404 Not Found")
       } else {
-        winnerId = winner.auctionWinner;
-        customerDb.findById(winnerId, (err, winner) => {
-          if (err) {
-            errorCb(err);
-          } else {
-            cb(winner);
-          }
-        });
+        if(auction.endDate < new Date()) {
+          let winnerId;
+          auctionDb.findById(auctionId, "auctionWinner", (err, winner) => {
+            if (err) {
+              errorCb("404 Not Found");
+            } else {
+              winnerId = winner.auctionWinner;
+              customerDb.findById(winnerId, (err, winner) => {
+                if (err) {
+                  errorCb("404 Not Found");
+                }  else {
+                  cb(winner);
+                }
+              });
+            }
+          });
+        } else {
+          errorCb("409 Conflict")
+        }
       }
-    });
+    })
   };
 
   const createAuction = (auction, cb, errorCb) => {
