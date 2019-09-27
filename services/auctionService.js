@@ -62,16 +62,49 @@ const auctionService = () => {
   };
 
   const placeNewBid = (auctionId, customerId, price, cb, errorCb) => {
-    auctionBidDb.create(
-      { auctionId: auctionId, customerId: customerId, price: price },
-      (err, result) => {
-        if (err) {
-          errorCb(err);
+    auctionDb.findById(auctionId, (err, auction) => {
+      if (err) {
+        errorCb(err);
+      } else {
+        if (auction.endDate < new Date()) {
+          errorCb("412 Precondition Failed");
+        } else if (auction.minimumPrice > price) {
+          errorCb("403 Forbidden");
         } else {
-          cb(result);
+          auctionBidDb.find({ auctionId: auctionId }, (err, bidList) => {
+            if (err) {
+              errorCb(err);
+            } else {
+              if (
+                bidList.length > 0 &&
+                bidList[bidList.length - 1].price > price
+              ) {
+                errorCb("412 Precondition Failed - ");
+              } else {
+                auctionBidDb.create(
+                  {
+                    auctionId: auctionId,
+                    customerId: customerId,
+                    price: price
+                  },
+                  (err, result) => {
+                    if (err) {
+                      errorCb(err);
+                    } else {
+                      auctionDb.findByIdAndUpdate(auctionId, {
+                        auctionWinner: customerId
+                      }).exec();
+                      cb(result);
+
+                    }
+                  }
+                );
+              }
+            }
+          });
         }
       }
-    );
+    });
   };
 
   return {
