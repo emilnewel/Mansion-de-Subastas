@@ -27,6 +27,9 @@ router.get("/:auctionId/winner", (req, res) => {
   auctionService.getAuctionWinner(
     auctionId,
     winner => {
+      if(winner == null) {
+        return res.status(409).json('Auction has not finished');
+      }
       return res.status(200).json(winner);
     },
     err => {
@@ -73,7 +76,8 @@ router.post("/:auctionId/bids", (req, res) => {
       return res.status(201).json(bid);
     }, 
     err => {
-      return res.status(400).json(err);
+      const statusCode = err.split(' ')[0];
+      return res.status(parseInt(statusCode)).json(err);
     }
   );
 })
