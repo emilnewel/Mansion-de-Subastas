@@ -60,4 +60,17 @@ router.post("/", (req, res) => {
   );
 });
 
+router.post("/:auctionId/bids", (req, res) => {
+  const {auctionId, customerId, price} = req.body;
+  auctionService.placeNewBid(
+    auctionId, customerId, price, 
+    bid => {
+      return res.status(201).json(bid);
+    }, 
+    err => {
+      return res.status(400).json(err);
+    }
+  );
+})
+
 module.exports = router;
