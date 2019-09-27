@@ -55,7 +55,7 @@ router.post("/", (req, res) => {
       return res.status(201).json(auction);
     },
     err => {
-      return res.status(400).json(err);
+      return res.status(parseInt(err)).json(err);
     }
   );
 });
@@ -63,10 +63,10 @@ router.post("/", (req, res) => {
 router.post("/:auctionId/bids", (req, res) => {
   const {auctionId, customerId, price} = req.body;
   auctionService.placeNewBid(
-    auctionId, customerId, price, 
+    auctionId, customerId, price,
     bid => {
       return res.status(201).json(bid);
-    }, 
+    },
     err => {
       return res.status(400).json(err);
     }

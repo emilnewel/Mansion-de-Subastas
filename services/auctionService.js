@@ -1,6 +1,7 @@
 const auctionService = () => {
   const auctionDb = require("../data/db").Auction;
   const auctionBidDb = require("../data/db").AuctionBid;
+  const artDb = require("../data/db").Art;
   const customerDb = require("../data/db").Customer;
 
   const getAllAuctions = (cb, errorCb) => {
@@ -42,11 +43,35 @@ const auctionService = () => {
   };
 
   const createAuction = (auction, cb, errorCb) => {
-    auctionDb.create(auction, (err, result) => {
+    // VALIDATION
+    // Is the artId valid??
+    let isAuctionItem;
+    artDb.findById(auction.artId, "isAuctionItem", (err, art) => {
       if (err) {
         errorCb(err);
       } else {
-        cb(result);
+        // Is the artId an auction item?? ERROR:412
+        isAuctionItem = art.isAuctionItem;
+        if(isAuctionItem == false){
+          errorCb("412 Precondition failed - This art isn't up for auction.");
+        } else {
+          // Is there ongoing auction for this art ERROR:409
+          auctionDb.find({artId: auction.artId}, (err, art) => {
+            if (err){
+              errorCb(err);
+            } else if (art.length != 0){
+              errorCb("409 Conflict - There is already a ongoing auction for this art.")
+            } else {
+              auctionDb.create(auction, (err, result) => {
+                if (err) {
+                  errorCb(err);
+                } else {
+                  cb(result);
+                }
+              });
+            }
+          });
+        }
       }
     });
   };
