@@ -33,7 +33,12 @@ router.get("/:auctionId/winner", (req, res) => {
       return res.status(200).json(winner);
     },
     err => {
-      return res.status(404).json(err);
+      const statusCode = err.split(' ')[0];
+      if(statusCode == "409") {
+        return res.status(409).json(err);
+      } else {
+        return res.status(404).json(err);
+      }
     }
   );
 });
@@ -47,7 +52,7 @@ router.get("/:auctionId/bids", (req, res) => {
     },
     err => {
       return res.status(404).json(err);
-    }
+    },
   );
 });
 
