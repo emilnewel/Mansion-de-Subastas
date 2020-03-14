@@ -69,7 +69,8 @@ router.post("/", (req, res) => {
 });
 
 router.post("/:auctionId/bids", (req, res) => {
-  const {auctionId, customerId, price} = req.body;
+  const { customerId, price } = req.body;
+  const { auctionId } = req.params;
   auctionService.placeNewBid(
     auctionId, customerId, price,
     bid => {
