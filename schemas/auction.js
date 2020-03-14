@@ -14,7 +14,8 @@ const AuctionSchema = Schema({
     required: true
   },
   auctionWinner: {
-      type: Schema.Types.ObjectId 
+      type: Schema.Types.ObjectId,
+      default: ""
   }
 });
 module.exports = new Schema(AuctionSchema);
