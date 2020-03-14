@@ -13,7 +13,8 @@ const connection = mongoose.createConnection(
   DB_CONN_STR,
   {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
   }
 );
 

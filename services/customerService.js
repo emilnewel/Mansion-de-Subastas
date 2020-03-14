@@ -22,7 +22,7 @@ const customerService = () => {
   };
 
   const getCustomerAuctionBids = (customerId, cb, errorCb) => {
-    auctionBidDb.findById({customerId: customerId}, (err, bids) => {
+    auctionBidDb.find({customerId: customerId}, (err, bids) => {
       if (err) {
         errorCb(err);
       } else {
