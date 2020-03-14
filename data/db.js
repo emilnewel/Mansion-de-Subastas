@@ -5,8 +5,12 @@ const auctionSchema = require("../schemas/auction");
 const auctionBidSchema = require("../schemas/auctionBid");
 const customerSchema = require("../schemas/customer");
 
+require("dotenv").config();
+
+const DB_CONN_STR = process.env.DB_CONN_STR
+
 const connection = mongoose.createConnection(
-  "mongodb+srv://emil:hahapoopoo@mansion-de-subastas-bopml.mongodb.net/test?retryWrites=true&w=majority",
+  DB_CONN_STR,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true

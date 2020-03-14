@@ -1,5 +1,6 @@
 const artService = () => {
   const artDb = require("../data/db").Art;
+  const artistDb = require("../data/db").Artist;
 
   const getAllArts = (cb, errorCb) => {
     artDb.find({}, (err, arts) => {
@@ -22,13 +23,23 @@ const artService = () => {
   };
 
   const createArt = (art, cb, errorCb) => {
-    artDb.create(art, (err, result) => {
-        if(err) {
-            errorCb(err);
-        } else {
-            cb(result);
-        }
-    });
+    
+    const { artistId } = art;
+
+    //Check if the auction is valid
+    artistDb.findById(artistId, (err, artist) => {
+      if (err) {
+        errorCb("412 Precondition failed - Artist not valid.");
+      } else {
+        artDb.create(art, (err, result) => {
+          if(err) {
+              errorCb(err);
+          } else {
+              cb(result);
+          }
+      });
+      }
+    }) 
   };
 
   return {
